@@ -17,71 +17,27 @@ public class Main {
         DistanceFlow files = new DistanceFlow(path_name, matrix_size);
         ArrayList<ArrayList<Integer>> distance_matrix = files.distance_matrix;
         ArrayList<ArrayList<Integer>> flow_matrix = files.flow_matrix;
+        ArrayList<Specimen> best_ones = new ArrayList<>();
 
         // distance and flow are correctly read from file
         if (files.dataReader()) {
+            Population population = new Population(distance_matrix, flow_matrix, px, pm, tour, pop_size);
+            population.countSpecimenCost();
+            best_ones.add(population.selectBestSpecimen());
 
-            Specimen example_solution = new Specimen(matrix_size);
-            example_solution.fillArrayRandomly();
-            example_solution.countCost(distance_matrix, flow_matrix);
-            System.out.println(example_solution);
+            while(gen > 0) {
+                population.selectAllParents();
+                population.generateAllChildren();
+                population.mutatePopulation();
 
-            Population first_pop = new Population(distance_matrix, flow_matrix, px, pm, tour, pop_size);
-            for(int i=0; i<pop_size; i++) {
-                System.out.println(first_pop.population.get(i));
+                population = new Population(population);
+                population.countSpecimenCost();
+                best_ones.add(population.selectBestSpecimen());
+                gen--;
             }
 
-            System.out.println("\n");
-
-            first_pop.selectAllParents();
-            System.out.println("Number of parents = " + first_pop.parents.size());
-            for(int i=0; i<first_pop.parents.size(); i++) {
-                System.out.println(first_pop.parents.get(i));
-            }
-
-            System.out.println("\n");
-
-            first_pop.generateAllChildren();
-            System.out.println("Number of children = " + first_pop.children.size());
-            for(int i=0; i<first_pop.children.size(); i++) {
-                System.out.println(first_pop.children.get(i));
-            }
-            first_pop.mutatePopulation();
-
-            System.out.println("\n\n\n");
-
-            Population next_pop = new Population(first_pop);
-            System.out.println("Population size = " + next_pop.population.size() + " (" + pop_size + ")");
-            for(int i=0; i<pop_size; i++) {
-                System.out.println(next_pop.population.get(i));
-            }
-
-            System.out.println("\n");
-
-            next_pop.selectAllParents();
-            System.out.println("Number of parents = " + next_pop.parents.size());
-            for(int i=0; i<next_pop.parents.size(); i++) {
-                System.out.println(next_pop.parents.get(i));
-            }
-
-            System.out.println("\n");
-
-            next_pop.generateAllChildren();
-            System.out.println("Number of children = " + next_pop.children.size());
-            for(int i=0; i<next_pop.children.size(); i++) {
-                System.out.println(next_pop.children.get(i));
-            }
-
-            Population new_pop = new Population(next_pop);
-
-            System.out.println(first_pop.countSpecimenCost(first_pop.population));
-            System.out.println(next_pop.countSpecimenCost(next_pop.population));
-            System.out.println(new_pop.countSpecimenCost(new_pop.population));
-
-            System.out.println("\nBEST\n" + first_pop.selectBestSpecimen(first_pop.population));
-            System.out.println(next_pop.selectBestSpecimen(next_pop.population));
-            System.out.println(new_pop.selectBestSpecimen(new_pop.population));
-
+            Specimen best = population.selectBestSpecimen(best_ones);
+            System.out.println("\nBest one: " + best);
 
         } else {
             System.out.println("Files haven't been found - sorry...");

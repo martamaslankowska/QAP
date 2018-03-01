@@ -45,9 +45,10 @@ public class Specimen {
         Random rand = new Random();
         for (int i=0; i<shuffles; i++) {
             int fac_index = rand.nextInt(size);
+            int city_index = rand.nextInt(size);
             int temp = genotype[fac_index];
-            genotype[fac_index] = genotype[i];
-            genotype[i] = temp;
+            genotype[fac_index] = genotype[city_index];
+            genotype[city_index] = temp;
         }
     }
 

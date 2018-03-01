@@ -60,6 +60,14 @@ public class Population {
         return overallCost;
     }
 
+    int countSpecimenCost() {
+        overallCost = 0;
+        for(Specimen s : population) {
+            overallCost += s.countCost(distance_matrix, flow_matrix);
+        }
+        return overallCost;
+    }
+
 
     ArrayList<Specimen> selectAllParents() {
         int nr_of_parents = (int) (p_cross*pop_size);
@@ -80,9 +88,18 @@ public class Population {
 
     Specimen selectBestSpecimen(ArrayList<Specimen> array) {
         Specimen best = array.get(0);
-        for(int j=1; j<tour; j++) {
+        for(int j=1; j<array.size(); j++) {
             if(best.cost > array.get(j).cost)
                 best = array.get(j);
+        }
+        return best;
+    }
+
+    Specimen selectBestSpecimen() {
+        Specimen best = population.get(0);
+        for(int j=1; j<pop_size; j++) {
+            if(best.cost > population.get(j).cost)
+                best = population.get(j);
         }
         return best;
     }
@@ -112,7 +129,7 @@ public class Population {
             numbers.remove((Integer)mom.genotype[i]);
         }
         for(int i=point; i<matrix_size; i++) {
-            if(numbers.contains(dad.genotype[i]))
+            if(!numbers.contains(dad.genotype[i]))
                 child.genotype[i] = -1;
             else {
                 child.genotype[i] = dad.genotype[i];
@@ -147,12 +164,13 @@ public class Population {
     }
 
     ArrayList<Specimen> mutatePopulation() {
-        // mutates population of selected parents
-        int nr_of_mutations = (int)(p_mutation*pop_size);
+        // mutates only population of selected parents
+        // p_mutation = probability of changing one pair of gens in genotype (not only selecting specimen)
+        int nr_of_mutations = (int)(p_mutation*pop_size*matrix_size);
         Random rand = new Random();
         for(int i=0; i<nr_of_mutations; i++) {
             Specimen mutated = parents.get(rand.nextInt(parents.size()));
-            mutated.shuffleArray(3); //shuffles n pairs (city,facility) in genotype
+            mutated.shuffleArray(1); //shuffles n pairs (city,facility) in genotype
         }
         return parents;
     }
