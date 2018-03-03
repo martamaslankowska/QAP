@@ -1,6 +1,7 @@
 import com.sun.org.apache.xpath.internal.SourceTree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -11,14 +12,21 @@ public class Specimen {
      * [Index]  0  1  2  3  ... - cities in the right order
      * [1 line] 3  5  0  7  ... - facilities in the right order */
 
-    int[] genotype;
+    Integer[] genotype;
     int size;
     int cost;
 
     public Specimen(int matrix_size) {
         size = matrix_size;
-        genotype = new int[size];
+        genotype = new Integer[size];
         cost = 0;
+    }
+
+    public Specimen(ArrayList<Integer> list, ArrayList<ArrayList<Integer>> distances, ArrayList<ArrayList<Integer>> flows) {
+        size = list.size();
+        genotype = new Integer[size];
+        genotype = list.toArray(genotype);
+        cost = countCost(distances, flows);
     }
 
     public int countCost(ArrayList<ArrayList<Integer>> distances, ArrayList<ArrayList<Integer>> flows) {
