@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Population {
@@ -169,8 +168,10 @@ public class Population {
         int nr_of_mutations = (int)(p_mutation*pop_size*matrix_size);
         Random rand = new Random();
         for(int i=0; i<nr_of_mutations; i++) {
-            Specimen mutated = parents.get(rand.nextInt(parents.size()));
+            int index = rand.nextInt(parents.size());
+            Specimen mutated = new Specimen(parents.get(index));
             mutated.shuffleArray(1); //shuffles n pairs (city,facility) in genotype
+            parents.set(index, mutated);
         }
         return parents;
     }
